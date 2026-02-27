@@ -1,9 +1,9 @@
 import type { Config } from 'drizzle-kit';
-import { settings } from './src/config/settings';
+import { settings } from './config/settings';
 
 export default {
-  schema: './src/db/schema/*.ts',
-  out: './src/db/migrations',
+  schema: './db/schema/*.ts',
+  out: './db/migrations',
   driver: 'pg',
   dbCredentials: {
     connectionString: settings.DATABASE_URL,

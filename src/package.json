@@ -4,7 +4,7 @@
   "description": "Full Stack Node.js project with TypeScript, PostgreSQL and Drizzle ORM",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "db:generate": "drizzle-kit generate:pg",

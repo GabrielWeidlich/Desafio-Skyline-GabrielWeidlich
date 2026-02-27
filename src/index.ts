@@ -1,6 +1,8 @@
 import express from 'express';
 import { settings } from './config/settings';
 import { db } from './db';
+import { errorHandler } from './middleware/errorHandler';
+import taskRoutes from './routes/tasks';
 
 const app = express();
 
@@ -24,6 +26,12 @@ app.get('/api', (req, res) => {
     version: '1.0.0',
   });
 });
+
+// Task routes
+app.use('/api/tasks', taskRoutes);
+
+// Error handling middleware
+app.use(errorHandler);
 
 // Start server
 app.listen(settings.PORT, () => {

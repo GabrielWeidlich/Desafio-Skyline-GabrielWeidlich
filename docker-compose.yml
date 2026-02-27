@@ -1,9 +1,10 @@
 version: '3.8'
 
 services:
-  app:
+  backend:
     build:
-      context: .
+      context: ./src
+      dockerfile: Dockerfile
       target: development
     ports:
       - "3000:3000"
@@ -15,12 +16,33 @@ services:
       - CORS_ORIGIN=${CORS_ORIGIN}
       - LOG_LEVEL=${LOG_LEVEL:-info}
     volumes:
-      - .:/app
+      - ./src:/app
+      - ./src/package.json:/app/package.json
+      - ./drizzle.config.ts:/app/drizzle.config.ts
+      - ./scripts:/app/scripts
+      - ./scripts/wait-for-it.sh:/app/scripts/wait-for-it.sh
       - /app/node_modules
     depends_on:
       db:
         condition: service_healthy
+    working_dir: /app
     command: sh -c "chmod +x scripts/migrate.sh && ./scripts/migrate.sh && npm run dev"
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+      target: development
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:3000/api
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
     networks:
       - app-network
 

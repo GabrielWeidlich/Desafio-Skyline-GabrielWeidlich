@@ -1,9 +1,9 @@
-# Multi-stage Dockerfile for Node.js application
+# Multi-stage Dockerfile for Node.js Backend
 
 # Base stage
 FROM node:18-alpine AS base
 WORKDIR /app
-COPY package*.json ./
+COPY package.json ./
 RUN npm ci --only=production && npm cache clean --force
 
 # Development stage
@@ -14,10 +14,10 @@ WORKDIR /app
 RUN apk add --no-cache netcat-openbsd
 
 # Install dependencies including dev dependencies
-COPY package*.json ./
+COPY package.json ./
 RUN npm install
 
-# Copy source code
+# Copy source code (all files to /app)
 COPY . .
 
 # Expose port
@@ -35,7 +35,7 @@ RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nodejs -u 1001
 
 # Copy package files
-COPY package*.json ./
+COPY package.json ./
 
 # Install only production dependencies
 RUN npm ci --only=production && npm cache clean --force
@@ -43,7 +43,7 @@ RUN npm ci --only=production && npm cache clean --force
 # Copy built application
 COPY --from=base /app/node_modules ./node_modules
 COPY --chown=nodejs:nodejs dist ./dist
-COPY --chown=nodejs:nodejs src/db ./src/db
+COPY --chown=nodejs:nodejs db ./db
 
 # Switch to non-root user
 USER nodejs
