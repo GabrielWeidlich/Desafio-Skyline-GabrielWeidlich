@@ -1,225 +1,256 @@
-# Node.js TypeScript Prisma Project
+# 🚀 Skyline Tasks
 
-Projeto Full Stack com Node.js, TypeScript, PostgreSQL e Prisma ORM, configurado com Docker para desenvolvimento e produção.
+**Sistema completo de gerenciamento de tarefas com agendamento, desenvolvido para desafio de estágio.**
 
-## 🏗️ Arquitetura dos Containers
+---
 
+## 📋 Visão Geral
+
+Skyline Tasks é uma aplicação full-stack moderna que permite criar, gerenciar e agendar tarefas com prioridades e datas de vencimento. Inspirado no Google Tasks, oferece uma interface intuitiva com feedback visual inteligente baseado na proximidade dos prazos.
+
+---
+
+## ✨ Funcionalidades Principais
+
+### 🎯 Core Features
+- ✅ **CRUD Completo**: Criar, ler, atualizar e deletar tarefas
+- 📅 **Agendamento**: Definir datas de vencimento para tarefas
+- 🎨 **Prioridades**: 4 níveis (Baixa, Média, Alta, Urgente)
+- 📝 **Descrições**: Campos opcionais para detalhes
+- ✏️ **Edição Inline**: Editar tarefas diretamente na lista
+
+### 🎨 Interface & UX
+- 🌙 **Tema Escuro**: Interface moderna e profissional
+- 🎯 **Cores Dinâmicas**: Feedback visual baseado na urgência
+  - 🔴 Vermelho: Tarefas vencidas
+  - 🟠 Laranja: Vence hoje
+  - 🟡 Amarelo: Vence amanhã
+  - ⚪ Neutro: Longo prazo
+- 📱 **Design Responsivo**: Adaptável a diferentes dispositivos
+- ⚡ **Feedback Visual**: Loading states e animações suaves
+
+### 🧠 Inteligência
+- 📊 **Formatação Inteligente**: "Hoje", "Amanhã", "Em X dias"
+- 🔍 **Busca e Filtros**: Por prioridade e status
+- 📈 **Ordenação**: Por data de criação
+
+---
+
+## 🏗️ Arquitetura
+
+### 📁 Estrutura do Projeto
 ```
-┌─────────────────┐    ┌─────────────────┐
-│   Docker Host   │    │   Docker Host   │
-│                 │    │                 │
-│  ┌───────────┐  │    │  ┌───────────┐  │
-│  │    App    │  │    │  │     DB    │  │
-│  │  Node.js  │◄─┼────┼──►│PostgreSQL │  │
-│  │ :3000     │  │    │  │ :5432     │  │
-│  └───────────┘  │    │  └───────────┘  │
-│                 │    │                 │
-└─────────────────┘    └─────────────────┘
+Desafio-Skyline-GabrielWeidlich/
+├── src/                    # Backend Node.js
+│   ├── controllers/        # Lógica de negócio
+│   ├── repositories/       # Acesso a dados
+│   ├── validators/         # Validação Zod
+│   ├── db/                # Schema e migrations
+│   └── routes/            # Endpoints API
+├── frontend/              # Frontend React
+│   ├── src/
+│   │   ├── App.tsx       # Componente principal
+│   │   └── index.css     # Estilos globais
+│   └── package.json
+├── docker-compose.yml     # Orquestração
+└── README.md
 ```
 
-## 🚀 Comandos para Subir o Ambiente
+### 🗄️ Banco de Dados
+**PostgreSQL** com schema otimizado:
 
-### Desenvolvimento
+```sql
+CREATE TABLE tasks (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title TEXT NOT NULL,
+  description TEXT,
+  completed BOOLEAN DEFAULT false,
+  priority VARCHAR DEFAULT 'MEDIUM',
+  dueDate TIMESTAMP,
+  createdAt TIMESTAMP DEFAULT now(),
+  updatedAt TIMESTAMP DEFAULT now()
+);
+```
+
+**Índices** para performance:
+- `tasks_due_date_idx` para consultas de agendamento
+
+---
+
+## 🛠️ Stack Tecnológico
+
+### Backend
+- **Node.js** + **TypeScript**
+- **Express.js** - Framework web
+- **Drizzle ORM** - Query builder type-safe
+- **PostgreSQL** - Banco de dados
+- **Zod** - Validação de schemas
+- **Docker** - Containerização
+
+### Frontend
+- **React 18** + **TypeScript**
+- **Vite** - Build tool ultra-rápido
+- **Tailwind CSS** - Styling utility-first
+- **Axios** - Cliente HTTP
+- **Lucide React** - Ícones modernos
+
+### DevOps
+- **Docker Compose** - Orquestração
+- **Hot Reload** - Desenvolvimento rápido
+- **Type Safety** - End-to-end TypeScript
+
+---
+
+## 🚀 Como Executar
+
+### Pré-requisitos
+- Docker e Docker Compose
+- Node.js (para desenvolvimento local)
+
+### 1. Ambiente Docker (Recomendado)
 ```bash
-# Subir todos os serviços
-docker compose up
+# Clonar repositório
+git clone <repository-url>
+cd Desafio-Skyline-GabrielWeidlich
 
-# Subir em modo detached
-docker compose up -d
+# Configurar ambiente
+cp .env.example .env
+# Editar .env com suas credenciais
 
-# Parar os serviços
-docker compose down
+# Iniciar todos os serviços
+docker-compose up --build
 
-# Ver logs
-docker compose logs -f app
-docker compose logs -f db
+# Acessar aplicação
+# Frontend: http://localhost:5173
+# Backend: http://localhost:3000
+# Banco: localhost:5432
 ```
 
-### Produção
+### 2. Desenvolvimento Local
 ```bash
-# Build e executar em produção
-docker compose --profile production up --build
+# Backend
+cd src
+npm install
+npm run dev
+
+# Frontend (outro terminal)
+cd frontend
+npm install
+npm run dev
 ```
 
-## 📊 Dicionário de Dados
+---
 
-### Tabela: Users
-| Campo | Tipo | Descrição | Restrições |
-|-------|------|-----------|------------|
-| id | String | ID único do usuário | Primary Key, CUID |
-| email | String | Email do usuário | Unique, Not Null |
-| name | String | Nome do usuário | Not Null |
-| createdAt | DateTime | Data de criação | Default: now() |
-| updatedAt | DateTime | Última atualização | Auto-update |
+## 📡 API Endpoints
 
-### Tabela: Tasks
-| Campo | Tipo | Descrição | Restrições |
-|-------|------|-----------|------------|
-| id | String | ID único da tarefa | Primary Key, CUID |
-| title | String | Título da tarefa | Not Null |
-| description | String | Descrição detalhada | Optional |
-| completed | Boolean | Status de conclusão | Default: false |
-| priority | Priority | Nível de prioridade | Enum: LOW, MEDIUM, HIGH, URGENT |
-| createdAt | DateTime | Data de criação | Default: now() |
-| updatedAt | DateTime | Última atualização | Auto-update |
-| userId | String | ID do usuário proprietário | Foreign Key → Users.id |
+### Tasks
+- `GET /api/tasks` - Listar todas as tarefas
+- `POST /api/tasks` - Criar nova tarefa
+- `PUT /api/tasks/:id` - Atualizar tarefa
+- `DELETE /api/tasks/:id` - Deletar tarefa
 
-### Enum: Priority
-- **LOW**: Baixa prioridade
-- **MEDIUM**: Prioridade média (padrão)
-- **HIGH**: Alta prioridade
-- **URGENT**: Urgente
-
-## 🔧 Estrutura do Projeto
-
-```
-src/
-├── config/
-│   └── settings.ts      # Centralizador de configurações com Zod
-├── controllers/         # Controllers da API
-├── services/           # Lógica de negócio
-├── repositories/       # Camada de acesso a dados
-├── index.ts           # Ponto de entrada da aplicação
-└── healthcheck.ts     # Health check para Docker
-
-prisma/
-├── schema.prisma      # Schema do banco de dados
-└── migrations/        # Migrações do Prisma
-```
-
-## ⚙️ Configuração
-
-### Variáveis de Ambiente
-O projeto utiliza validação de variáveis de ambiente com Zod. As variáveis obrigatórias são:
-
-- **NODE_ENV**: Ambiente (development/production/test)
-- **PORT**: Porta da aplicação (default: 3000)
-- **DATABASE_URL**: URL de conexão com PostgreSQL
-- **JWT_SECRET**: Chave secreta para JWT (mínimo 32 caracteres)
-- **CORS_ORIGIN**: Origem permitida para CORS (opcional)
-- **LOG_LEVEL**: Nível de log (error/warn/info/debug)
-
-### Docker Configuration
-- **Multi-stage builds**: Estágios de development e production
-- **Hot-reload**: Suporte a live-reload no desenvolvimento
-- **Health checks**: Verificação de saúde dos containers
-- **Volumes persistência**: Dados do PostgreSQL persistidos
-- **Wait-for-it**: Script para aguardar o banco estar pronto
-
-## 🛠️ Scripts Disponíveis
-
-```bash
-# Desenvolvimento
-npm run dev              # Iniciar com hot-reload
-npm run build            # Compilar TypeScript
-npm run start            # Iniciar produção
-
-# Banco de Dados
-npm run db:generate      # Gerar client Prisma
-npm run db:migrate       # Rodar migrações
-npm run db:push          # Push schema para DB
-npm run db:studio        # Abrir Prisma Studio
-
-# Testes
-npm test                 # Rodar testes
-```
-
-## 📝 Exemplo de Uso
-
-### Criar Usuário
+### Payload Examples
 ```typescript
-const user = await prisma.user.create({
-  data: {
-    email: 'user@example.com',
-    name: 'John Doe',
-  },
-});
+// Criar tarefa
+POST /api/tasks
+{
+  "title": "Estudar React",
+  "description": "Completar tutorial oficial",
+  "priority": "HIGH",
+  "dueDate": "2024-03-10T14:30:00.000Z"
+}
+
+// Atualizar tarefa
+PUT /api/tasks/uuid
+{
+  "completed": true,
+  "dueDate": "2024-03-15T10:00:00.000Z"
+}
 ```
 
-### Criar Tarefa
-```typescript
-const task = await prisma.task.create({
-  data: {
-    title: 'Minha primeira tarefa',
-    description: 'Descrição detalhada',
-    priority: 'HIGH',
-    userId: user.id,
-  },
-});
+---
+
+## 🎯 Destaques Técnicos
+
+### 🔒 Type Safety
+- **End-to-end TypeScript**: Do frontend ao backend
+- **Zod Schemas**: Validação runtime com inferência de tipos
+- **Drizzle ORM**: Queries type-safe e autocompletar
+
+### 🚀 Performance
+- **Índices otimizados** para consultas de data
+- **Lazy loading** de componentes
+- **Hot reload** para desenvolvimento rápido
+
+### 🎨 Design Patterns
+- **Repository Pattern**: Separação de responsabilidades
+- **Controller Pattern**: Lógica de negócio organizada
+- **Schema-First**: Validação como fonte da verdade
+
+### 🐳 Docker
+- **Multi-stage builds** para imagens otimizadas
+- **Health checks** para dependências
+- **Volume mounts** para desenvolvimento
+
+---
+
+## 🧪 Testes
+
+```bash
+# Backend
+cd src
+npm test
+
+# Frontend
+cd frontend
+npm run lint
 ```
 
-## 🐛 Troubleshooting
+---
 
-### Problemas Comuns
+## 📈 Roadmap
 
-1. **Porta 3000 em uso**
-   ```bash
-   # Verificar processo na porta
-   netstat -tulpn | grep :3000
-   
-   # Matar processo
-   kill -9 <PID>
-   ```
+- [ ] Autenticação de usuários
+- [ ] Notificações de vencimento
+- [ ] Categorias e tags
+- [ ] Dashboard analytics
+- [ ] Mobile app (React Native)
 
-2. **Erro de conexão com banco**
-   ```bash
-   # Verificar status do container
-   docker compose ps
-   
-   # Verificar logs do banco
-   docker compose logs db
-   ```
+---
 
-3. **Permissões do wait-for-it.sh**
-   ```bash
-   # No Windows, o script funciona nativamente
-   # No Linux/Mac:
-   chmod +x wait-for-it.sh
-   ```
+## 🤝 Contribuição
 
-## 📚 Tecnologias Utilizadas
+1. Fork o projeto
+2. Crie feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit suas mudanças (`git commit -m 'feat: add amazing feature'`)
+4. Push para branch (`git push origin feature/amazing-feature`)
+5. Abra Pull Request
 
-- **Node.js 18+**: Runtime JavaScript
-- **TypeScript**: Tipagem estática
-- **Express**: Framework web
-- **Prisma**: ORM moderno
-- **PostgreSQL 15**: Banco de dados relacional
-- **Docker**: Containerização
-- **Zod**: Validação de schemas
-- **tsx**: Execução TypeScript com hot-reload
-
-# Prisma Models Organization
-
-## 📁 Estrutura de Arquivos
-
-Este diretório contém a documentação organizada dos modelos Prisma. 
-
-**Importante:** Prisma não suporta nativamente importação de modelos de arquivos separados. Os modelos reais permanecem no `schema.prisma` principal, mas esta estrutura serve como:
-
-- 📖 **Documentação separada** para cada modelo
-- 🎯 **Referência rápida** durante o desenvolvimento  
-- 🏗️ **Organização visual** da estrutura do banco
-
-## 📂 Arquivos Disponíveis
-
-- **`User.prisma`** - Documentação do modelo User
-- **`Task.prisma`** - Documentação do modelo Task  
-- **`Priority.prisma`** - Documentação do enum Priority
-
-## 🔗 Como Funciona
-
-1. **Schema Principal**: `prisma/schema.prisma` contém os modelos ativos
-2. **Documentação**: Arquivos aqui servem como referência e organização
-3. **Desenvolvimento**: Use estes arquivos para entender a estrutura sem precisar navegar pelo schema completo
-
-## 💡 Dica
-
-Ao adicionar novos modelos:
-1. Adicione ao `schema.prisma` principal
-2. Crie arquivo correspondente aqui para documentação
-3. Mantenha ambos sincronizados
-
+---
 
 ## 📄 Licença
 
-MIT License
+MIT License - veja [LICENSE](LICENSE) para detalhes.
+
+---
+
+## 👨‍💻 Autor
+
+**Gabriel Weidlich**  
+Desenvolvedor Full Stack | TypeScript | React | Node.js
+
+*Desenvolvido como parte do desafio de estágio Skyline* 🚀
+
+---
+
+## 🎉 Demonstração
+
+### Tarefas com Agendamento
+![Tasks with due dates](docs/tasks-demo.png)
+
+### Interface Responsiva
+![Mobile view](docs/mobile-view.png)
+
+---
+
+**"A simplicidade é o último grau de sofisticação."** - Leonardo da Vinci
