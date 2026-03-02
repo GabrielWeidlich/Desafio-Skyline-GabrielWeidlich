@@ -8,10 +8,10 @@ export const tasks = pgTable('tasks', {
   description: text('description'),
   completed: boolean('completed').default(false).notNull(),
   priority: varchar('priority', { enum: priorityEnum }).default('MEDIUM').notNull(),
+  dueDate: timestamp('dueDate'),
   createdAt: timestamp('createdAt').defaultNow().notNull(),
   updatedAt: timestamp('updatedAt').defaultNow().notNull(),
-}
-);
+});
 
 export type Task = typeof tasks.$inferSelect;
 export type NewTask = typeof tasks.$inferInsert;

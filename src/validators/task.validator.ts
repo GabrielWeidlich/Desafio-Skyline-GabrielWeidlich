@@ -5,6 +5,7 @@ export const createTaskSchema = z.object({
   title: z.string().min(1, 'Title is required').max(255, 'Title too long'),
   description: z.string().max(1000, 'Description too long').optional(),
   priority: z.enum(priorityEnum).default('MEDIUM'),
+  dueDate: z.date().optional().nullable(),
 });
 
 export const updateTaskSchema = z.object({
@@ -12,6 +13,7 @@ export const updateTaskSchema = z.object({
   description: z.string().max(1000, 'Description too long').optional().nullable(),
   completed: z.boolean().optional(),
   priority: z.enum(priorityEnum).optional(),
+  dueDate: z.date().optional().nullable(),
 });
 
 export const taskIdSchema = z.object({

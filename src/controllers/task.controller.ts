@@ -20,8 +20,23 @@ export class TaskController {
 
   async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const validatedData: CreateTaskInput = createTaskSchema.parse(req.body);
+      console.log('Request body:', req.body);
+      
+      // Transform dueDate to proper format if present
+      const body = { ...req.body };
+      if (body.dueDate && body.dueDate !== '') {
+        body.dueDate = new Date(body.dueDate);  // Keep as Date object, not string
+      } else {
+        body.dueDate = null;
+      }
+      
+      console.log('Transformed body:', body);
+      
+      const validatedData: CreateTaskInput = createTaskSchema.parse(body);
+      console.log('Validated data:', validatedData);
+      
       const task = await this.taskRepository.create(validatedData);
+      console.log('Created task:', task);
       
       res.status(201).json({
         success: true,
@@ -29,6 +44,7 @@ export class TaskController {
         message: 'Task created successfully'
       });
     } catch (error) {
+      console.error('Error in create task:', error);
       next(error);
     }
   }

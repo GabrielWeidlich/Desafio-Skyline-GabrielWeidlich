@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS "tasks" (
 	"description" text,
 	"completed" boolean DEFAULT false NOT NULL,
 	"priority" varchar DEFAULT 'MEDIUM' NOT NULL,
+	"dueDate" timestamp,
 	"createdAt" timestamp DEFAULT now() NOT NULL,
 	"updatedAt" timestamp DEFAULT now() NOT NULL
 );
